@@ -1,0 +1,28 @@
+// Pipeline for executing a python script:
+pipeline {
+    agent any
+
+    stages {
+        stage('checkout') {
+            steps {
+                checkout scmGit(branches: [[name: '*/develop']], extensions: [], userRemoteConfigs: [[credentialsId: '91f33a9a-7f1c-4793-93ae-bc161e182fef', url: 'https://github.com/coeusyk/devops-for-ai.git']])
+            }
+        }
+
+        stage('build') {
+            steps {
+                git branch: 'develop', credentialsId: '91f33a9a-7f1c-4793-93ae-bc161e182fef', url: 'https://github.com/coeusyk/devops-for-ai.git'
+
+                // Using shell since this jenkins is working in a docker container, which is linux-based
+                // If not using docker, then use 'bat' for running it as a Windows batch script
+                sh 'python3 python/list_methods.py'
+            }
+        }
+
+        stage('test') {
+            steps {
+                echo "Testing is done"
+            }
+        }
+    }
+}
